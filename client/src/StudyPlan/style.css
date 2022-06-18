@@ -1,0 +1,43 @@
+.undo-current-changes {
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: white !important;
+  color: rgba(var(--red-danger), 1) !important;
+  border: 2px solid rgba(var(--red-danger), 1);
+  transition: background-color 0.3s ease;
+}
+
+.undo-current-changes:hover {
+  border-color: #bb2d3b !important;
+  color: white !important;
+  background-color: #bb2d3b !important;
+}
+
+.studyplan-card {
+  border: solid #dc3545 3px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-image: url("../../static/images/rocket.png"), url("../../static/images/wawe.svg");
+  background-repeat: no-repeat;
+  background-position: 0% 50%, 0% 101%;
+}
+
+.studyplan-card:hover {
+  /*transform: translateY(-5%);*/
+  background-position: 20% 50%, 0% 101%;
+}
+
+.studyplan-card .description {
+  text-align: right;
+}
+
+.studyplan-card .description > label {
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.height-20 {
+  height: 240px !important;
+}

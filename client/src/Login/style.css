@@ -1,0 +1,28 @@
+:root {
+  --red-danger: 220, 53, 69;
+  --red-danger-ligh: 255, 100, 100;
+}
+
+.login-form {
+  font-size: 13px;
+  gap: 20px;
+  height: 70vh;
+}
+
+.login-form button {
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid rgba(var(--red-danger), 1);
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  border-color: rgba(var(--red-danger), 1) !important;
+  color: rgba(var(--red-danger), 1) !important;
+  background-color: white !important;
+}
+
+.login-form > p {
+  font-size: 40px;
+}

@@ -1,0 +1,12 @@
+.navbar-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.vheight-100 {
+    min-height: 100vh;
+}
