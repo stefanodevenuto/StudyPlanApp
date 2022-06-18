@@ -21,7 +21,11 @@ class UserController {
             throw UserErrorFactory.newInvalidCredentials();
 
         await this.authService.login(req);
-        return user;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        };
     }
 
     async getAllUsers() {

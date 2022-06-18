@@ -164,7 +164,7 @@ function App() {
     updateCourseList();
   }, [refreshCourses.length])
 
-  // ------------------------------------------------------ Functions
+  // ------------------------------------------------------ Study Plan
 
   const createStudyPlan = (type) => {
     const newStudyPlan = new StudyPlanClass(undefined, type);
@@ -211,7 +211,7 @@ function App() {
   function LoadingSpinner() {
     return (
       <div className='loading d-flex justify-content-center align-items-center'>
-        <Spinner size="md" animation="border" /> :
+        <Spinner size="md" animation="border" />
       </div>
     );
   }
@@ -273,26 +273,6 @@ function App() {
                   ) : <Navigate to='/' />
                 } />
 
-                <Route path='/add' element={
-                  user.loggedIn ? (
-                    dirtyCourses ?
-                      <LoadingSpinner /> :
-                      <Row>
-                        <CourseList
-                          courses={courses}
-                          addCourse={addCourseToStudyPlan}
-                        />
-                        <StudyPlan
-                          studyPlan={studyPlan}
-                          createStudyPlan={createStudyPlan}
-                          removeCourse={removeCourseFromStudyPlan}
-                          undoCurrentChanges={undoCurrentChangesStudyPlan}
-                          sendRequestCreate={sendRequestCreateStudyPlan}
-                        />
-                      </Row>
-                  ) : <Navigate to='/' />
-                } />
-
                 <Route path='/login' element={<LoginForm login={login} logout={logout} />} />
                 <Route path='*' element={<Navigate to="/" />} />
               </Routes>
@@ -305,5 +285,3 @@ function App() {
 }
 
 export default App;
-
-

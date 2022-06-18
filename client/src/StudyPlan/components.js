@@ -28,7 +28,7 @@ function ErrorsAlert(props) {
   return (
     <Alert className='mt-3' variant='danger' onClose={props.close} dismissible>
       Please, resolve the conflicts before submitting:
-      <ul>
+      <ul className='pt-2'>
         {props.errors.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </Alert>

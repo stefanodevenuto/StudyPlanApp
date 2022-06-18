@@ -1,8 +1,7 @@
 import { Form, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { useState, useContext } from 'react';
+import { validate } from 'react-email-validator';
 import './style.css'
-
-const reEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 function LoginForm(props) {
   const [username, setUsername] = useState('testUser1@mail.com');
@@ -18,7 +17,7 @@ function LoginForm(props) {
       return;
     }
  
-    if (!reEmail.test(username)) {
+    if (!validate(username)) {
       setErrorMessage('Please insert a valid mail');
       return;
     }

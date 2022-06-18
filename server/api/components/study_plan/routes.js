@@ -14,7 +14,7 @@ class StudyPlanRoutes {
 
   initRoutes() {
     this.router.get(
-      '/', 
+      '/',
       this.authService.isLoggedIn,
       (req, res, next) => this.controller.getStudyPlanByOwner(req.user.id)
         .then((course) => res.status(200).json(course))
@@ -26,6 +26,7 @@ class StudyPlanRoutes {
       this.authService.isLoggedIn,
       body('type').isString(),
       body('courses').isArray(),
+      body('courses.*').isString(),
 			this.errorHandler.validateRequest,
       (req, res, next) => this.controller.createUpdateStudyPlan(req.user.id, req.body.type, req.body.courses)
         .then(() => res.status(200).send())

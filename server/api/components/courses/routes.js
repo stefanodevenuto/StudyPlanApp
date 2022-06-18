@@ -15,7 +15,6 @@ class CourseRoutes {
   initRoutes() {
     this.router.get(
       '/',
-      //this.authService.isLoggedIn,
       (req, res, next) => this.controller.getAllCourses()
         .then((courses) => res.status(200).json(courses))
         .catch((err) => next(err))
