@@ -35,7 +35,6 @@ function LoginForm(props) {
           await props.login(username, password);
           setLoadingLogin(false);
         } catch(err) {
-          console.log(err);
           setErrorMessage(ERRORS.INVALID_CREDENTIALS_ERROR);
           setLoadingLogin(false);
         }

@@ -12,7 +12,7 @@ import API from './API';
 import User from '../context';
 import StudyPlan from '../StudyPlan/components';
 import StudyPlanClass from '../StudyPlan/studyPlan';
-import { filterCourses, INCREMENT, ERRORS } from './util';
+import { filterCourses, ACTION, ERRORS } from './util';
 
 function App() {
 
@@ -171,7 +171,7 @@ function App() {
     setStudyPlan(sp => {
       return new StudyPlanClass(sp.type, [...sp.courses, course])
     });
-    setRefreshCourses([INCREMENT, course.code]);
+    setRefreshCourses([ACTION.INCREMENT, course.code]);
   }
 
   // ------------------------------------------------------ Routes

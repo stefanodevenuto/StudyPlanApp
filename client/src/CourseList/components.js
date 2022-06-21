@@ -1,5 +1,5 @@
-import { useContext, useRef } from 'react';
-import { Table, Button, Accordion } from 'react-bootstrap';
+import { useContext } from 'react';
+import { Accordion } from 'react-bootstrap';
 import { Container, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 import { CheckCircle, PlusCircleFill, InfoCircle, SlashCircle } from "react-bootstrap-icons";
 import { useLocation } from 'react-router-dom';
@@ -93,8 +93,8 @@ function CourseHeader(props) {
                   {!props.course.added && props.course.propedeutic ?
                     <CustomPopover eventKey={props.eventKey}
                       header="Propedeutic Course"
-                      text="Be sure to insert this course if you want to keep "
-                      courses={[props.course.code]}>
+                      text="Be sure to insert this course if you want to keep the already inserted!"
+                      courses={[]}>
                       <InfoCircle className='propedeutic' height={24} width={24} />
                     </CustomPopover> : undefined}
                 </Col>

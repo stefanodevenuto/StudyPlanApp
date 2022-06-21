@@ -5,9 +5,7 @@
 
 - Route `/`: shows the whole list of courses, along with the current study plan if the user is logged. It acts as the homepage of the application. 
 - Route `/edit`: shows the current Study Plan, along with the inserted courses, and the list of courses. It permits to add the various courses to the study plan, accordingly with the pre set constraints.
-- Route `/add`: non mi ricodo
 - Route `/login`: shows the login form. It permits to be enrolled in the login process
-- ...
 
 ## API Server
 
@@ -144,7 +142,7 @@
 }
 ```
 - Response: `200 OK`
-- Error response: `401 Unauthorized` (Not authenticated), `422 Unprocessable Entity` (Number of credits excedeed OR Conflicts in prpedeutic courses OR Conflicts in incompatible courses),  `404 Not Found` (Inexistent course), `500 Internal Server Error` (Unexpected error)
+- Error response: `401 Unauthorized` (Not authenticated), `422 Unprocessable Entity` (Number of credits excedeed OR Conflicts in proedeutic courses OR Conflicts in incompatible courses OR Course already inserted OR Max students reached),  `404 Not Found` (Inexistent course), `500 Internal Server Error` (Unexpected error)
 
 #### Delete Study Plan
 - DELETE `/api/studyPlan/`
@@ -155,27 +153,46 @@
 
 ## Database Tables
 
-- Table `user` - contains the user information
-  Fields: id, email, name, password, salt
-- Table `course` - contains the courses
-  Fields: code, name, credits, propedeuticCourse, currentStudents, maxStudents
-- Table `incompatibleCourses` - list of incompatible courses
-  Fields: firstCourse, secondCourse
-- Table `studyPlan` - contains the study plan information
-  Fields: id, type, user
-- Table `studyPlan_course` - contains the list of courses inside a stuyPlan
-  Field: studyPlan. course
+- Table `user` - contains the user information<br>
+  __Fields__: id, email, name, password, salt
+- Table `course` - contains the courses<br>
+  __Fields__: code, name, credits, propedeuticCourse, currentStudents, maxStudents
+- Table `incompatibleCourses` - list of incompatible courses<br>
+  __Fields__: firstCourse, secondCourse
+- Table `studyPlan` - contains the study plan information<br>
+  __Fields__: id, type, user
+- Table `studyPlan_course` - contains the list of courses inside a studyPlan<br>
+  __Fields__: studyPlan. course
 
 ## Main React Components
 
-- `StudyPlan` (in `StudyPlan/components.js`): shows the study plan info and the list of courses associated, if already created, otherwise the choiche between study plan types.
+- `StudyPlan` (in `StudyPlan/components.js`): shows the study plan info and the list of courses associated, if already created, otherwise the choice between study plan types.
 - `CourseList` (in `Course/components.js`): shows the list of courses, along with the ability to add a course to the study plan if the current user is logged in and has a study plan
 - `CustomNavbar` (in `Navbar/Navbar.js`): top bar, visible in every page, which encapsulates the functionalities of login, logout, modifying a study plan and deleting a study plan
 - `LoginForm` (in `Login/components.js`): shows the form used to submit a new login request. It prevents the use from entering invalid emails and shows a specific error in case of invalid credentials
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+### Create Study Plan
+![Create Study Plan](./img/create_studyplan.png)
+
+### Logged homepage with no Study Plan
+![Logged homepage with no Study Plan](./img/logged_homepage_nostudyplan.png)
+
+### Logged homepage with Study Plan
+![Logged homepage with Study Plan](./img/logged_homepage_studyplan.png)
+
+### Logged homepage with more Info
+![Logged homepage with more Info](./img/logged_homepage_not_collapsed.png)
+
+### Login
+![Login](./img/login.png)
+
+### Modify Study Plan
+![Modify Study Plan](./img/modify_studyplan.png)
+
+### Not-logged Homepage
+![Not-logged Homepage](./img/unlogged_homepage.png)
 
 ## Users Credentials
 

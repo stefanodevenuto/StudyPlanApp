@@ -61,4 +61,4 @@ const filterCourses = (toFilterCourses, studyPlan, todo = []) => {
   })
 }
 
-export { filterCourses, INCREMENT, DECREMENT, NOTHING, ERRORS }
+export { filterCourses, INCREMENT, DECREMENT, NOTHING, ERRORS, ACTION }

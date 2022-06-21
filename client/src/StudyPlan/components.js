@@ -1,17 +1,17 @@
 import { Container, Row, Col, ListGroup, Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { EraserFill } from 'react-bootstrap-icons';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import './style.css'
 import StudyPlanClass from './studyPlan';
 import { useState } from 'react';
 
-import { DECREMENT, NOTHING, ERRORS } from '../App/util';
+import { ACTION, ERRORS } from '../App/util';
 
 function StudyPlan(props) {
-  const [oldStudyPlanCourses, setOldStudyPlanCourses] = useState(props.studyPlan ? props.studyPlan.courses : []);
-  const [oldCourses, setOldCourses] = useState(props.courses);
+  const oldStudyPlanCourses = useRef(props.studyPlan ? props.studyPlan.courses : []);
+  const oldCourses = useRef(props.courses);
 
   const [errors, setErrors] = useState([]);
   const location = useLocation();
@@ -23,7 +23,7 @@ function StudyPlan(props) {
 
   function removeCourseFromStudyPlan(code) {
     props.setStudyPlan(sp => new StudyPlanClass(sp.type, sp.courses.filter(c => c.code !== code)))
-    props.setRefreshCourses([DECREMENT, code]);
+    props.setRefreshCourses([ACTION.DECREMENT, code]);
   }
 
   function undoCurrentChangesStudyPlan(oldStudyPlanCourses, oldCourses) {
@@ -32,7 +32,7 @@ function StudyPlan(props) {
     });
 
     props.setCourses(oldCourses);
-    props.setRefreshCourses([NOTHING]);
+    props.setRefreshCourses([ACTION.NOTHING]);
   }
 
   if (!props.studyPlan && location.pathname !== "/edit")
@@ -129,7 +129,7 @@ function StudyPlanContent(props) {
             <Button onClick={sendRequestCreate} className='md-3 mb-1' variant='danger'>
               {loadingSave ? <Spinner animation="border" size="sm" /> : "Save"}
             </Button>
-            <Button onClick={() => props.undoCurrentChanges(props.oldStudyPlanCourses, props.oldCourses)} className='md-3 undo-current-changes' variant='danger'>Reset</Button>
+            <Button onClick={() => props.undoCurrentChanges(props.oldStudyPlanCourses.current, props.oldCourses.current)} className='md-3 undo-current-changes' variant='danger'>Reset</Button>
           </> : undefined
         }
       </Row>
