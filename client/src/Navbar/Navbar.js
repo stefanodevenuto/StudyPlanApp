@@ -11,7 +11,7 @@ import User from "../context";
 function CustomNavbar(props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loggedIn } = useContext(User);
+  const { loggedIn } = useContext(User);
 
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -67,7 +67,7 @@ function CustomNavbar(props) {
       {loggedIn ? (
         <>
           {
-            location.pathname !== "/edit" ?
+            location.pathname !== "/edit" && props.studyPlan ?
               <>
                 <Nav.Item className="ms-md-auto">
                   <Nav.Link>

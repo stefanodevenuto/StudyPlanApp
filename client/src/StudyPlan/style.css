@@ -8,6 +8,10 @@
   transition: background-color 0.3s ease;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .undo-current-changes:hover {
   border-color: #bb2d3b !important;
   color: white !important;
@@ -21,6 +25,7 @@
   cursor: pointer;
   background-image: url("../../static/images/rocket.png"), url("../../static/images/wawe.svg");
   background-repeat: no-repeat;
+  background-size: 60% 120%, auto;
   background-position: 0% 50%, 0% 101%;
 }
 

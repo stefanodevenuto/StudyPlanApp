@@ -1,5 +1,9 @@
 /* ------------------------------------ General */
 
+.html {
+  scroll-behavior: smooth;
+}
+
 .below-nav {
   padding-top: 3rem !important;
 }
@@ -26,13 +30,18 @@
   transition: all 0.3s ease;
 }
 
-.accordion-item:hover {
-  transform: translateX(5%);
+main #left-sidebar:not(.col-12) .accordion-item:hover {
+  transform: translateX(3%);
+}
+
+.accordion-button {
+  box-shadow: none !important;
 }
 
 .accordion-button:not(.collapsed) {
   background-color: rgba(255, 100, 100) !important;
   box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+  color: white !important;
 }
 
 .accordion-button:not(.collapsed) label {
@@ -44,6 +53,10 @@
 }
 
 .accordion-button:hover label {
+  color: white !important;
+}
+
+.accordion-button:hover svg {
   color: white !important;
 }
 

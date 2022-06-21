@@ -3,6 +3,7 @@ const TYPE_NOT_VALID = "Type not valid";
 const INVALID_CREDITS = "The total number of credits exceeds the constraints of the selected Study Plan type";
 const INCOMPATIBLE_COURSES = "There are some courses that are incompatible";
 const PROPEDEUTIC_COURSES = "Some propedeutic courses are not present";
+const ALREADY_INSERTED_COURSE = "Some courses have been already inserted";
 
 class StudyPlanErrorFactory extends Error {
   static newStudyPlanNotFound() {
@@ -40,6 +41,14 @@ class StudyPlanErrorFactory extends Error {
   static newIncompatibleCourses() {
     let error = new Error();
     error.customMessage = INCOMPATIBLE_COURSES;
+    error.customCode = 422;
+
+    return error;
+  }
+
+  static newAlreadyInsertedCourse() {
+    let error = new Error();
+    error.customMessage = ALREADY_INSERTED_COURSE;
     error.customCode = 422;
 
     return error;

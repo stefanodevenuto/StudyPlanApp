@@ -8,9 +8,13 @@ import StudyPlanClass from './studyPlan';
 import { useState } from 'react';
 
 function StudyPlan(props) {
-  const [errors, setErrors] = useState([]);
+  const [oldStudyPlanCourses, setOldStudyPlanCourses] = useState(props.studyPlan ? props.studyPlan.courses : []);
+  const [oldCourses, setOldCourses] = useState(props.courses);
 
-  if (Object.keys(props.studyPlan).length === 0)
+  const [errors, setErrors] = useState([]);
+  const location = useLocation();
+
+  if (!props.studyPlan && location.pathname !== "/edit")
     return <StudyPlanNotCreated createStudyPlan={props.createStudyPlan} />
 
   return <StudyPlanContent
@@ -21,6 +25,8 @@ function StudyPlan(props) {
     undoCurrentChanges={props.undoCurrentChanges}
     setErrors={setErrors}
     errors={errors}
+    oldStudyPlanCourses={oldStudyPlanCourses}
+    oldCourses={oldCourses}
   />
 }
 
@@ -67,7 +73,6 @@ function StudyPlanContent(props) {
     let errorMessages = [];
     props.setErrors([]);
 
-    console.log(props.studyPlan.currentCredits, props.studyPlan.type)
     if (!checkNumberOfCredits(props.studyPlan.currentCredits, props.studyPlan.type)) {
       errorMessages.push(`Please, add/remove some courses, because the bounds for \
         credits are not respected`);
@@ -79,8 +84,6 @@ function StudyPlanContent(props) {
         propedeutic for ${c.code}`)
     })
 
-    console.log(errorMessages)
-
     if (errorMessages.length !== 0) {
       props.setErrors(errorMessages);
     } else {
@@ -90,7 +93,7 @@ function StudyPlanContent(props) {
   }
 
   return (
-    <Container className="col-6 below-nav mx-5">
+    <Container className="col-4 mx-5">
       <Row>
         <Col>
           <StudyPlanInfo studyPlan={props.studyPlan} />
@@ -105,15 +108,15 @@ function StudyPlanContent(props) {
         {
           location.pathname === "/edit" ? <>
             <Button onClick={sendRequestCreate} className='md-3 mb-1' variant='danger'>
-              {loadingSave ? <Spinner animation="border" size="sm" /> : "Save" }  
+              {loadingSave ? <Spinner animation="border" size="sm" /> : "Save"}
             </Button>
-            <Button onClick={props.undoCurrentChanges} className='md-3 undo-current-changes' variant='danger'>Cancel</Button>
+            <Button onClick={() => props.undoCurrentChanges(props.oldStudyPlanCourses, props.oldCourses)} className='md-3 undo-current-changes' variant='danger'>Cancel</Button>
           </> : undefined
         }
       </Row>
       {props.errors.length ?
         <Row>
-          <ErrorsAlert close={() => props.setErrors([])} errors={props.errors}/>
+          <ErrorsAlert close={() => props.setErrors([])} errors={props.errors} />
         </Row> : false}
     </Container>
   );
@@ -133,17 +136,15 @@ function StudyPlanNotCreated(props) {
   const navigate = useNavigate();
 
   const createStudyPlan = (type) => {
-    console.log("ciao")
     props.createStudyPlan(type);
     navigate("/edit");
   }
 
   return (
-    <Container className="col-6 below-nav mx-5">
+    <Container className="col-4 mx-5">
       <Row className='h-100'>
         <Col>
-          <h1>No study plan yet...</h1>
-          <h1>...start by selecting your frequency!</h1>
+          <h1>Select a frequency to create a new plan!</h1>
           <Row className='height-20 my-3'>
             <StudyPlanCoverCard name="Part Time" createStudyPlan={() => createStudyPlan(StudyPlanClass.PARTIME)} />
           </Row>
@@ -165,17 +166,21 @@ const printType = (type) => {
 }
 
 function StudyPlanInfo(props) {
-  const location = useLocation();
-
   return (
     <>
       <h2>Info</h2>
       <ListGroup>
         <ListGroup.Item>
-          {`Type: ${printType(props.studyPlan.type)}`}
+          <span className='bold'>Type:</span> {printType(props.studyPlan.type)}
         </ListGroup.Item>
         <ListGroup.Item>
-          Credits: {props.studyPlan.currentCredits}/{props.studyPlan.maxCredits}
+          <span className='bold'>Min credits:</span> {props.studyPlan.minCredits}
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <span className='bold'>Max credits:</span> {props.studyPlan.maxCredits}
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <span className='bold'>Credits:</span> {props.studyPlan.currentCredits}/{props.studyPlan.maxCredits}
         </ListGroup.Item>
       </ListGroup>
     </>
@@ -187,19 +192,19 @@ function StudyPlanCourses(props) {
 
   return (
     <>
-      <h2>Courses</h2>
+      <h2 className='mt-4'>Courses</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th># Code</th>
-            <th>Name</th>
-            <th>Credits</th>
-            <th>Max № of Students</th>
+            <th className='bold'># Code</th>
+            <th className='bold'>Name</th>
+            <th className='bold'>Credits</th>
+            <th className='bold'>Max № of Students</th>
           </tr>
         </thead>
         <tbody>
           {
-            props.courses.map((course, i) =>
+            props.courses?.map((course, i) =>
               <tr key={i}>
                 <td>{course.code}</td>
                 <td>{course.name}</td>

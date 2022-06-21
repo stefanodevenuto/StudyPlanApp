@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useContext, useRef } from 'react';
 import { Table, Button, Accordion } from 'react-bootstrap';
 import { Container, Row, Col, OverlayTrigger, Popover } from 'react-bootstrap';
 import { CheckCircle, PlusCircleFill, InfoCircle, SlashCircle } from "react-bootstrap-icons";
 import { useLocation } from 'react-router-dom';
 
 import './style.css'
+import User from "../context";
 
 function CourseList(props) {
+  const { loggedIn } = useContext(User);
 
   return (
-    <aside className="col-5 below-nav" id="left-sidebar">
+    <aside className={loggedIn ? "col-7" : "col-12"} id="left-sidebar">
       <Accordion defaultActiveKey={['0']} alwaysOpen>
         {
           props.courses.map((course, i) =>
@@ -78,12 +80,15 @@ function CourseHeader(props) {
               <>
                 <Col className='col-1'>
                   {props.course.added ? <CheckCircle className='added' height={24} width={24} /> : undefined}
-                  {!props.course.added && !props.course.incompatible && 
+                  {!props.course.added && !props.course.incompatible &&
                     (!props.course.maxStudents || props.course.maxStudents > props.course.currentStudents) ? <PlusCircleFill height={24} width={24} onClick={(event) => addCourse(event)} /> : undefined}
                 </Col>
                 <Col>
                   <label className='text-danger'>{props.course.name}</label>
                 </Col>
+                <Col><span>{props.course.code}</span></Col>
+                <Col><span>{props.course.credits} CFU</span></Col>
+                <Col><span>{props.course.currentStudents} / {props.course.maxStudents === null ? "unlimited" : props.course.maxStudents}</span></Col>
                 <Col className='col-1'>
                   {!props.course.added && props.course.propedeutic ?
                     <CustomPopover eventKey={props.eventKey}
@@ -98,7 +103,7 @@ function CourseHeader(props) {
                     <CustomPopover eventKey={props.eventKey}
                       header="Maximum Students cap reached"
                       text="Sorry, you can't select this course because is full"
-                      courses={props.course.incompatibleCourses}>
+                      courses={[]}>
                       <SlashCircle className='incompatible' height={24} width={24} />
                     </CustomPopover> : undefined}
 
@@ -113,7 +118,12 @@ function CourseHeader(props) {
               </>
 
               :
-              <Col><label className='text-danger'>{props.course.name}</label></Col>
+              <>
+                <Col><label className='text-danger'>{props.course.name}</label></Col>
+                <Col><span>{props.course.code}</span></Col>
+                <Col><span>{props.course.credits}</span></Col>
+                <Col><span>{props.course.currentStudents} / {props.course.maxStudents === null ? "unlimited" : props.course.maxStudents}</span></Col>
+              </>
           }
         </Row>
       </Container>
@@ -125,18 +135,6 @@ function CourseDescription(props) {
   return (
     <Container className='px-0'>
       <Row>
-        <Col><label className='bold'>Code:</label></Col>
-        <Col><span>{props.course.code}</span></Col>
-      </Row>
-      <Row>
-        <Col><label className='bold'>Credits:</label></Col>
-        <Col><span>{props.course.credits}</span></Col>
-      </Row>
-      <Row>
-        <Col><label className='bold'>№ of Students:</label></Col>
-        <Col><span>{props.course.currentStudents} / {props.course.maxStudents === null ? "Unlimited" : props.course.maxStudents}</span></Col>
-      </Row>
-      <Row>
         <Col><label className='bold'>Propedeutic Course:</label></Col>
         <Col><span>{props.course.propedeuticCourse === null ? "None" : props.course.propedeuticCourse}</span></Col>
       </Row>
@@ -146,7 +144,7 @@ function CourseDescription(props) {
           {props.course.incompatibleCourses.length !== 0 ?
             props.course.incompatibleCourses.map((c, i) => {
               return <Row key={i}><Col><span>{c}</span></Col></Row>;
-            }) : <Col><span>{"Not set!"}</span></Col>
+            }) : <Col><span>{"None"}</span></Col>
           }
         </Col>
       </Row>

@@ -16,13 +16,14 @@ import Course from '../CourseList/course';
 
 const INCREMENT = 1;
 const DECREMENT = 2;
+const NOTHING = 3;
 
 function App() {
 
   // ------------------------------------------------------ Hooks
 
   const [courses, setCourses] = useState([]);
-  const [studyPlan, setStudyPlan] = useState({});
+  const [studyPlan, setStudyPlan] = useState(null);
 
   const [dirtyCourses, setDirtyCourses] = useState(true);
   const [dirtyStudyPlan, setDirtyStudyPlan] = useState(true);
@@ -41,6 +42,7 @@ function App() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      setError("");
       try {
         const user = await API.getUserInfo();
         setUser({ ...user, loggedIn: true });
@@ -54,10 +56,8 @@ function App() {
 
   useEffect(() => {
     async function getCoursesAndStudyPlan() {
-      if (user.loggedIn) {
+      if (user.loggedIn)
         setDirtyStudyPlan(true);
-        //setDirtyCourses(true);
-      }
     }
 
     getCoursesAndStudyPlan();
@@ -71,10 +71,11 @@ function App() {
 
   const logout = async () => {
     try {
+      setError("");
       await API.logout();
       setUser({});
       setCourses([]);
-      setStudyPlan({});
+      setStudyPlan(null);
       setDirtyCourses(true);
       setDirtyStudyPlan(true);
     } catch (err) {
@@ -86,11 +87,10 @@ function App() {
 
   useEffect(() => {
     if (dirtyStudyPlan) {
+      setError("");
       API.getStudyPlan()
         .then((sp) => {
-          const adjustedStudyPlan = new StudyPlanClass(sp.id,
-            sp.type, sp.owner, sp.courses)
-
+          const adjustedStudyPlan = new StudyPlanClass(sp.type, sp.courses)
           setStudyPlan(adjustedStudyPlan);
           setDirtyStudyPlan(false);
           setDirtyCourses(true);
@@ -98,7 +98,7 @@ function App() {
         .catch(err => {
           console.log(err);
           if (err.status === 404 || err.status === 401) {
-            setStudyPlan({});
+            setStudyPlan(null);
             setDirtyStudyPlan(false);
             setDirtyCourses(true);
           } else {
@@ -115,13 +115,13 @@ function App() {
       let structuredCourse = new Course(c.code, c.name, c.credits, c.currentStudents,
         c.maxStudents, c.propedeuticCourse, c.incompatibleCourses)
 
-      if (studyPlan?.courses?.some((sc) => sc.code === c.code))
+      if (studyPlan?.courses.some((sc) => sc.code === c.code))
         structuredCourse.added = true;
 
-      if (studyPlan?.courses?.some((sc) => sc.propedeuticCourse === c.code))
+      if (studyPlan?.courses.some((sc) => sc.propedeuticCourse === c.code))
         structuredCourse.propedeutic = true;
 
-      if (studyPlan?.courses?.some((sc) => sc.incompatibleCourses.includes(c.code)))
+      if (studyPlan?.courses.some((sc) => sc.incompatibleCourses.includes(c.code)))
         structuredCourse.incompatible = true;
 
       if (c.code === courseCode) {
@@ -138,6 +138,7 @@ function App() {
   useEffect(() => {
     async function updateCourseList() {
       if (dirtyCourses) {
+        setError("");
         try {
           const coursesAPI = await API.getAllCourses();
           let newCourses = filterCourses(coursesAPI);
@@ -167,24 +168,24 @@ function App() {
   // ------------------------------------------------------ Study Plan
 
   const createStudyPlan = (type) => {
-    const newStudyPlan = new StudyPlanClass(undefined, type);
+    const newStudyPlan = new StudyPlanClass(type);
     setStudyPlan(newStudyPlan);
   }
 
   const addCourseToStudyPlan = (course) => {
     setStudyPlan(sp => {
-      return new StudyPlanClass(sp.id, sp.type, sp.owner, [...sp.courses, course])
+      return new StudyPlanClass(sp.type, [...sp.courses, course])
     });
     setRefreshCourses([INCREMENT, course.code]);
   }
 
   function removeCourseFromStudyPlan(code) {
-    setStudyPlan(sp => new StudyPlanClass(sp.id, sp.type, sp.owner,
-      sp.courses.filter(c => c.code !== code)))
+    setStudyPlan(sp => new StudyPlanClass(sp.type, sp.courses.filter(c => c.code !== code)))
     setRefreshCourses([DECREMENT, code]);
   }
 
   async function sendRequestCreateStudyPlan() {
+    setError("");
     try {
       await API.createUpdateStudyPlan(studyPlan.type, studyPlan.courses.map((c) => c.code))
       setDirtyCourses(true);
@@ -193,11 +194,17 @@ function App() {
     }
   }
 
-  function undoCurrentChangesStudyPlan() {
-    setDirtyStudyPlan(true);
+  function undoCurrentChangesStudyPlan(oldStudyPlanCourses, oldCourses) {
+    setStudyPlan(sp => {
+      return new StudyPlanClass(sp.type, oldStudyPlanCourses)
+    });
+
+    setCourses(oldCourses);
+    setRefreshCourses([NOTHING]);
   }
 
   async function sendRequestDeleteStudyPlan() {
+    setError("");
     try {
       await API.deleteStudyPlan();
       setDirtyStudyPlan(true);
@@ -230,7 +237,7 @@ function App() {
 
             { /* Main content */}
             <main className="below-nav">
-              {error ? <Alert className='below-nav-2' variant='danger' onClose={() => setError("")} dismissible>{error}</Alert> : false}
+              {error ? <Alert variant='danger' onClose={() => setError("")} dismissible>{error}</Alert> : false}
               <Routes>
 
                 <Route path="/" element={
@@ -243,6 +250,7 @@ function App() {
                       />
                       {user.loggedIn && !dirtyStudyPlan ?
                         <StudyPlan
+                          courses={courses}
                           studyPlan={studyPlan}
                           createStudyPlan={createStudyPlan}
                           removeCourse={removeCourseFromStudyPlan}
@@ -263,6 +271,7 @@ function App() {
                           addCourse={addCourseToStudyPlan}
                         />
                         <StudyPlan
+                          courses={courses}
                           studyPlan={studyPlan}
                           createStudyPlan={createStudyPlan}
                           removeCourse={removeCourseFromStudyPlan}

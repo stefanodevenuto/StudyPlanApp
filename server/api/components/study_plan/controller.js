@@ -27,7 +27,7 @@ class StudyPlanController {
     for (let code of courses) {
       let course = await this.courseController.getCourseByID(code);
 
-      if (course.propedeuticCourse && !courses.some((c) => c.code === course.propedeuticCourse))
+      if (course.propedeuticCourse && !courses.some((c) => c === course.propedeuticCourse))
         throw StudyPlanErrorFactory.newNoPropedeuticCourse();
 
       if (course.incompatibleCourses.length && courses.some((c) => course.incompatibleCourses.includes(c)))
@@ -39,7 +39,16 @@ class StudyPlanController {
     if (!this.checkNumberOfCredits(total, type))
       throw StudyPlanErrorFactory.newInvalidNumberOfCredits();
 
-    await this.dao.createStudyPlan(userId, type, courses);
+    try {
+      await this.dao.createStudyPlan(userId, type, courses);
+    } catch(err) {
+      if (err.code === "SQLITE_CONSTRAINT") {
+				if (err.message.includes("UNIQUE"))
+					err = StudyPlanErrorFactory.newAlreadyInsertedCourse();
+			}
+
+      throw err;
+    }
   }
 
   async deleteStudyPlan(userId) {

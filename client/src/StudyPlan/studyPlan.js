@@ -4,13 +4,13 @@ class StudyPlanClass {
 
   static TYPES = [this.PARTIME, this.FULLTIME];
 
-  constructor(id = undefined, type = undefined, owner = undefined, courses = []) {
-    this.id = id;
+  constructor(type, courses = []) {
+    console.log(type, courses)
     this.type = type;
-    this.owner = owner;
     this.courses = courses;
     this.maxCredits = this.type === "PARTIME" ? 40 : 80;
-    this.currentCredits = this.courses.reduce((acc, course) => acc + course.credits, 0)
+    this.minCredits = this.type === "PARTIME" ? 20 : 60;
+    this.currentCredits = this.courses.reduce((acc, course) => acc + course.credits, 0);
   }
 }
 
