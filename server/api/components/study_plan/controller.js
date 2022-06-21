@@ -45,6 +45,9 @@ class StudyPlanController {
       if (err.code === "SQLITE_CONSTRAINT") {
 				if (err.message.includes("UNIQUE"))
 					err = StudyPlanErrorFactory.newAlreadyInsertedCourse();
+
+        if (err.message.includes("CHECK"))
+					err = StudyPlanErrorFactory.newCourseMaxStudentsReached();
 			}
 
       throw err;

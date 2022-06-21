@@ -7,6 +7,8 @@ import './style.css'
 import StudyPlanClass from './studyPlan';
 import { useState } from 'react';
 
+import { DECREMENT, NOTHING, ERRORS } from '../App/util';
+
 function StudyPlan(props) {
   const [oldStudyPlanCourses, setOldStudyPlanCourses] = useState(props.studyPlan ? props.studyPlan.courses : []);
   const [oldCourses, setOldCourses] = useState(props.courses);
@@ -14,15 +16,33 @@ function StudyPlan(props) {
   const [errors, setErrors] = useState([]);
   const location = useLocation();
 
+  const createStudyPlan = (type) => {
+    const newStudyPlan = new StudyPlanClass(type);
+    props.setStudyPlan(newStudyPlan);
+  }
+
+  function removeCourseFromStudyPlan(code) {
+    props.setStudyPlan(sp => new StudyPlanClass(sp.type, sp.courses.filter(c => c.code !== code)))
+    props.setRefreshCourses([DECREMENT, code]);
+  }
+
+  function undoCurrentChangesStudyPlan(oldStudyPlanCourses, oldCourses) {
+    props.setStudyPlan(sp => {
+      return new StudyPlanClass(sp.type, oldStudyPlanCourses)
+    });
+
+    props.setCourses(oldCourses);
+    props.setRefreshCourses([NOTHING]);
+  }
+
   if (!props.studyPlan && location.pathname !== "/edit")
-    return <StudyPlanNotCreated createStudyPlan={props.createStudyPlan} />
+    return <StudyPlanNotCreated createStudyPlan={createStudyPlan} />
 
   return <StudyPlanContent
     studyPlan={props.studyPlan}
-    removeCourse={props.removeCourse}
-    sendRequestCreate={props.sendRequestCreate}
-    sendRequestDelete={props.sendRequestDelete}
-    undoCurrentChanges={props.undoCurrentChanges}
+    removeCourse={removeCourseFromStudyPlan}
+    sendRequestCreate={props.sendRequestCreateStudyPlan}
+    undoCurrentChanges={undoCurrentChangesStudyPlan}
     setErrors={setErrors}
     errors={errors}
     oldStudyPlanCourses={oldStudyPlanCourses}
@@ -74,8 +94,7 @@ function StudyPlanContent(props) {
     props.setErrors([]);
 
     if (!checkNumberOfCredits(props.studyPlan.currentCredits, props.studyPlan.type)) {
-      errorMessages.push(`Please, add/remove some courses, because the bounds for \
-        credits are not respected`);
+      errorMessages.push(ERRORS.BOUND_EXCEEDED_ERROR);
     }
 
     props.studyPlan.courses.forEach((c) => {
@@ -101,7 +120,7 @@ function StudyPlanContent(props) {
       </Row>
       <Row>
         <Col>
-          <StudyPlanCourses courses={props.studyPlan.courses} removeCourse={props.removeCourse} />
+          <StudyPlanCourses courses={props.studyPlan?.courses} removeCourse={props.removeCourse} />
         </Col>
       </Row>
       <Row>
@@ -110,7 +129,7 @@ function StudyPlanContent(props) {
             <Button onClick={sendRequestCreate} className='md-3 mb-1' variant='danger'>
               {loadingSave ? <Spinner animation="border" size="sm" /> : "Save"}
             </Button>
-            <Button onClick={() => props.undoCurrentChanges(props.oldStudyPlanCourses, props.oldCourses)} className='md-3 undo-current-changes' variant='danger'>Cancel</Button>
+            <Button onClick={() => props.undoCurrentChanges(props.oldStudyPlanCourses, props.oldCourses)} className='md-3 undo-current-changes' variant='danger'>Reset</Button>
           </> : undefined
         }
       </Row>

@@ -12,7 +12,6 @@ class StudyPlanDAO extends AppDAO {
 
   async createStudyPlan(userId, type, courseIds) {
     const query_delete = 'DELETE FROM studyPlan WHERE user = ?';
-    const query_update_course = 'UPDATE course SET currentStudents = currentStudents + 1 WHERE code = ?';
 
     const query_studyPlan = 'INSERT INTO studyPlan(type, user) VALUES (?, ?)';
     const query_association = 'INSERT INTO studyPlan_course(studyPlan, course) VALUES (?, ?)';
@@ -22,10 +21,8 @@ class StudyPlanDAO extends AppDAO {
     await this.run(query_delete, [userId]);
     const { id } = await this.run(query_studyPlan, [type, userId]);
 
-    for (let courseId of courseIds) {
+    for (let courseId of courseIds)
       await this.run(query_association, [id, courseId]);
-      await this.run(query_update_course, [courseId])
-    }
 
     await this.commitTransaction();
     return id;

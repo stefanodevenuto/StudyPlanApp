@@ -12,11 +12,7 @@ import API from './API';
 import User from '../context';
 import StudyPlan from '../StudyPlan/components';
 import StudyPlanClass from '../StudyPlan/studyPlan';
-import Course from '../CourseList/course';
-
-const INCREMENT = 1;
-const DECREMENT = 2;
-const NOTHING = 3;
+import { filterCourses, INCREMENT, ERRORS } from './util';
 
 function App() {
 
@@ -37,7 +33,7 @@ function App() {
   // ------------------------------------------------------ Login
 
   const handleError = (err, message) => {
-    setError(message)
+    setError("Internal Server Error: " + message)
   }
 
   useEffect(() => {
@@ -48,7 +44,7 @@ function App() {
         setUser({ ...user, loggedIn: true });
       } catch (err) {
         if (err.status !== 401)
-          handleError(err, "Cannot perform login");
+          handleError(err, ERRORS.LOGIN_ERROR);
       }
     };
     checkAuth();
@@ -64,14 +60,25 @@ function App() {
   }, [user.loggedIn])
 
   const login = async (email, password) => {
-    const user = await API.login(email, password);
-    setUser({ ...user, loggedIn: true });
-    navigate('/');
+    try {
+      setError("");
+
+      const user = await API.login(email, password);
+      setUser({ ...user, loggedIn: true });
+      navigate('/');
+    } catch (err) {
+      if (err.status === 401)
+        throw err;
+      else
+        handleError(err, ERRORS.LOGIN_ERROR)
+    }
+
   }
 
   const logout = async () => {
     try {
       setError("");
+
       await API.logout();
       setUser({});
       setCourses([]);
@@ -79,11 +86,11 @@ function App() {
       setDirtyCourses(true);
       setDirtyStudyPlan(true);
     } catch (err) {
-      handleError(err, "Can't perform logout")
+      handleError(err, ERRORS.LOGOUT_ERROR)
     }
   }
 
-  // ------------------------------------------------------ Course
+  // ------------------------------------------------------ Update Content
 
   useEffect(() => {
     if (dirtyStudyPlan) {
@@ -102,38 +109,11 @@ function App() {
             setDirtyStudyPlan(false);
             setDirtyCourses(true);
           } else {
-            handleError(err, "Cannot recover the current Study Plan")
+            handleError(err, ERRORS.GET_STUDYPLAN_ERROR)
           }
         })
     }
   }, [dirtyStudyPlan])
-
-  const filterCourses = (toFilterCourses, todo = []) => {
-    const [action, courseCode] = todo;
-
-    return toFilterCourses.map((c) => {
-      let structuredCourse = new Course(c.code, c.name, c.credits, c.currentStudents,
-        c.maxStudents, c.propedeuticCourse, c.incompatibleCourses)
-
-      if (studyPlan?.courses.some((sc) => sc.code === c.code))
-        structuredCourse.added = true;
-
-      if (studyPlan?.courses.some((sc) => sc.propedeuticCourse === c.code))
-        structuredCourse.propedeutic = true;
-
-      if (studyPlan?.courses.some((sc) => sc.incompatibleCourses.includes(c.code)))
-        structuredCourse.incompatible = true;
-
-      if (c.code === courseCode) {
-        if (action === INCREMENT)
-          structuredCourse.currentStudents += 1;
-        if (action === DECREMENT)
-          structuredCourse.currentStudents -= 1;
-      }
-
-      return structuredCourse;
-    })
-  }
 
   useEffect(() => {
     async function updateCourseList() {
@@ -141,12 +121,12 @@ function App() {
         setError("");
         try {
           const coursesAPI = await API.getAllCourses();
-          let newCourses = filterCourses(coursesAPI);
+          let newCourses = filterCourses(coursesAPI, studyPlan);
 
           setCourses(newCourses);
           setDirtyCourses(false);
         } catch (err) {
-          handleError(err, "Cannot recover the courses list")
+          handleError(err, ERRORS.GET_STUDYPLAN_ERROR)
         }
       }
     }
@@ -156,7 +136,7 @@ function App() {
   useEffect(() => {
     async function updateCourseList() {
       if (refreshCourses.length) {
-        let newCourses = filterCourses(courses, refreshCourses);
+        let newCourses = filterCourses(courses, studyPlan, refreshCourses);
 
         setCourses(newCourses);
         setRefreshCourses([]);
@@ -167,40 +147,14 @@ function App() {
 
   // ------------------------------------------------------ Study Plan
 
-  const createStudyPlan = (type) => {
-    const newStudyPlan = new StudyPlanClass(type);
-    setStudyPlan(newStudyPlan);
-  }
-
-  const addCourseToStudyPlan = (course) => {
-    setStudyPlan(sp => {
-      return new StudyPlanClass(sp.type, [...sp.courses, course])
-    });
-    setRefreshCourses([INCREMENT, course.code]);
-  }
-
-  function removeCourseFromStudyPlan(code) {
-    setStudyPlan(sp => new StudyPlanClass(sp.type, sp.courses.filter(c => c.code !== code)))
-    setRefreshCourses([DECREMENT, code]);
-  }
-
   async function sendRequestCreateStudyPlan() {
     setError("");
     try {
       await API.createUpdateStudyPlan(studyPlan.type, studyPlan.courses.map((c) => c.code))
       setDirtyCourses(true);
     } catch (err) {
-      handleError(err, "Cannot create/update the Study Plan")
+      handleError(err, ERRORS.CREATE_STUDYPLAN_ERROR)
     }
-  }
-
-  function undoCurrentChangesStudyPlan(oldStudyPlanCourses, oldCourses) {
-    setStudyPlan(sp => {
-      return new StudyPlanClass(sp.type, oldStudyPlanCourses)
-    });
-
-    setCourses(oldCourses);
-    setRefreshCourses([NOTHING]);
   }
 
   async function sendRequestDeleteStudyPlan() {
@@ -209,8 +163,15 @@ function App() {
       await API.deleteStudyPlan();
       setDirtyStudyPlan(true);
     } catch (err) {
-      handleError(err, "Cannot delete the Study Plan")
+      handleError(err, ERRORS.DELETE_STUDYPLAN_ERROR)
     }
+  }
+
+  const addCourseToStudyPlan = (course) => {
+    setStudyPlan(sp => {
+      return new StudyPlanClass(sp.type, [...sp.courses, course])
+    });
+    setRefreshCourses([INCREMENT, course.code]);
   }
 
   // ------------------------------------------------------ Routes
@@ -230,7 +191,6 @@ function App() {
           logout={logout}
           studyPlan={studyPlan}
           sendRequestDeleteStudyPlan={sendRequestDeleteStudyPlan}
-          setRefreshCourses={setRefreshCourses}
         />
         <Container fluid>
           <Row className="vheight-100">
@@ -252,10 +212,10 @@ function App() {
                         <StudyPlan
                           courses={courses}
                           studyPlan={studyPlan}
-                          createStudyPlan={createStudyPlan}
-                          removeCourse={removeCourseFromStudyPlan}
-                          undoCurrentChanges={undoCurrentChangesStudyPlan}
-                          sendRequestCreate={sendRequestCreateStudyPlan}
+                          setCourses={setCourses}
+                          setStudyPlan={setStudyPlan}
+                          sendRequestCreateStudyPlan={sendRequestCreateStudyPlan}
+                          setRefreshCourses={setRefreshCourses}
                         />
                         : undefined}
                     </Row>
@@ -273,10 +233,10 @@ function App() {
                         <StudyPlan
                           courses={courses}
                           studyPlan={studyPlan}
-                          createStudyPlan={createStudyPlan}
-                          removeCourse={removeCourseFromStudyPlan}
-                          undoCurrentChanges={undoCurrentChangesStudyPlan}
-                          sendRequestCreate={sendRequestCreateStudyPlan}
+                          setCourses={setCourses}
+                          setStudyPlan={setStudyPlan}
+                          sendRequestCreateStudyPlan={sendRequestCreateStudyPlan}
+                          setRefreshCourses={setRefreshCourses}
                         />
                       </Row>
                   ) : <Navigate to='/' />
