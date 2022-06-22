@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { validate } from 'react-email-validator';
 import './style.css'
 
-import { ERRORS } from '../App/util';
+import { ERRORS } from '../util';
 
 function LoginForm(props) {
   const [username, setUsername] = useState('testUser1@mail.com');
-  const [password, setPassword] = useState('testPassword1');
+  const [password, setPassword] = useState('password');
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingLogin, setLoadingLogin] = useState(false);
 
@@ -62,7 +62,7 @@ function LoginForm(props) {
               <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} />
             </Form.Group>
 
-            <Button variant='danger' className='mt-2' onClick={handleSubmit}>
+            <Button variant='danger' type="submit" className='mt-2' onClick={handleSubmit}>
               {loadingLogin ? <Spinner animation="border" size="sm" /> : "Login"}
             </Button>
           </Form>

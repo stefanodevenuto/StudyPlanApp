@@ -22,8 +22,6 @@ class CourseController {
             courses.push(course);
         }
 
-        console.log(courses)
-
         return courses;
     }
 

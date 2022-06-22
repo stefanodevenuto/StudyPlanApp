@@ -166,40 +166,23 @@
 
 ## Main React Components
 
+- `Homepage` (in `Homepage/components.js`): shows the whole homepage of the application, with just the courses in case of un-logged in user and courses and study plan in case of logged in one. 
 - `StudyPlan` (in `StudyPlan/components.js`): shows the study plan info and the list of courses associated, if already created, otherwise the choice between study plan types.
 - `CourseList` (in `Course/components.js`): shows the list of courses, along with the ability to add a course to the study plan if the current user is logged in and has a study plan
-- `CustomNavbar` (in `Navbar/Navbar.js`): top bar, visible in every page, which encapsulates the functionalities of login, logout, modifying a study plan and deleting a study plan
+- `CustomNavbar` (in `Navbar/components.js`): top bar, visible in every page, which encapsulates the functionalities of login, logout, modifying a study plan and deleting a study plan
 - `LoginForm` (in `Login/components.js`): shows the form used to submit a new login request. It prevents the use from entering invalid emails and shows a specific error in case of invalid credentials
 
 ## Screenshot
 
 ### Create Study Plan
-![Create Study Plan](./img/create_studyplan.png)
-
-### Logged homepage with no Study Plan
-![Logged homepage with no Study Plan](./img/logged_homepage_nostudyplan.png)
-
-### Logged homepage with Study Plan
-![Logged homepage with Study Plan](./img/logged_homepage_studyplan.png)
-
-### Logged homepage with more Info
-![Logged homepage with more Info](./img/logged_homepage_not_collapsed.png)
-
-### Login
-![Login](./img/login.png)
-
-### Modify Study Plan
-![Modify Study Plan](./img/modify_studyplan.png)
-
-### Not-logged Homepage
-![Not-logged Homepage](./img/unlogged_homepage.png)
+![Modifying Study Plan](./img/modifying_studyplan.png)
 
 ## Users Credentials
 
-| email              | password      | name      |
-|:-------------------|:--------------|:----------|
-| testUser1@mail.com | testPassword1 | testUser1 |
-| testUser2@mail.com | testPassword2 | testUser2 |
-| testUser3@mail.com | testPassword3 | testUser3 |
-| testUser4@mail.com | testPassword4 | testUser4 |
-| testUser5@mail.com | testPassword5 | testUser5 |
+| email              | password | name      |
+|:-------------------|:---------|:----------|
+| testUser1@mail.com | password | testUser1 |
+| testUser2@mail.com | password | testUser2 |
+| testUser3@mail.com | password | testUser3 |
+| testUser4@mail.com | password | testUser4 |
+| testUser5@mail.com | password | testUser5 |

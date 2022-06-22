@@ -38,7 +38,7 @@ async function getUserInfo() {
   if (response.ok) {
     return userInfo;
   } else {
-    throw userInfo;  // an object with the error coming from the server
+    throw userInfo;
   }
 }
 
@@ -65,7 +65,6 @@ async function deleteStudyPlan() {
 }
 
 async function login(email, password) {
-  console.log(email, password)
   let response = await fetch(new URL(`${USER}/login`, APIURL), {
     method: 'POST',
     credentials: 'include',

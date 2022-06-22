@@ -1,13 +1,15 @@
 import { Container, Row, Col, ListGroup, Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { EraserFill } from 'react-bootstrap-icons';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useContext } from 'react';
 
 import './style.css'
 import StudyPlanClass from './studyPlan';
 import { useState } from 'react';
 
-import { ACTION, ERRORS } from '../App/util';
+import { ACTION, ERRORS } from '../util';
+
+import User from "../context";
 
 function StudyPlan(props) {
   const oldStudyPlanCourses = useRef(props.studyPlan ? props.studyPlan.courses : []);
@@ -15,7 +17,7 @@ function StudyPlan(props) {
 
   const [errors, setErrors] = useState([]);
   const location = useLocation();
-
+  
   const createStudyPlan = (type) => {
     const newStudyPlan = new StudyPlanClass(type);
     props.setStudyPlan(newStudyPlan);
@@ -159,11 +161,13 @@ function StudyPlanNotCreated(props) {
     navigate("/edit");
   }
 
+  const { name } = useContext(User);
+
   return (
     <Container className="col-4 mx-5">
       <Row className='h-100'>
         <Col>
-          <h1>Select a frequency to create a new plan!</h1>
+          <h1><span className='red-color'>{name}</span>, select the frequency of the new plan!</h1>
           <Row className='height-20 my-3'>
             <StudyPlanCoverCard name="Part Time" createStudyPlan={() => createStudyPlan(StudyPlanClass.PARTIME)} />
           </Row>
@@ -185,9 +189,11 @@ const printType = (type) => {
 }
 
 function StudyPlanInfo(props) {
+  const { name } = useContext(User);
+
   return (
     <>
-      <h2>Info</h2>
+      <h2>Study Plan of <span className='red-color'>{name}</span></h2>
       <ListGroup>
         <ListGroup.Item>
           <span className='bold'>Type:</span> {printType(props.studyPlan.type)}
@@ -230,7 +236,9 @@ function StudyPlanCourses(props) {
                 <td>{course.credits}</td>
                 <td>{course.maxStudents === null ? "Unlimited" : course.maxStudents}</td>
                 {location.pathname === "/edit" ?
-                  <td><EraserFill onClick={() => props.removeCourse(course.code)} /></td>
+                  <td className='remove-course' onClick={() => props.removeCourse(course.code)}>
+                    <EraserFill />
+                  </td>
                   : undefined}
               </tr>
             )

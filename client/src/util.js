@@ -1,4 +1,4 @@
-import Course from "../CourseList/course";
+import Course from "./CourseList/course";
 
 const INCREMENT = 1;
 const DECREMENT = 2;

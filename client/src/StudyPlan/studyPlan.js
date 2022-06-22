@@ -5,7 +5,6 @@ class StudyPlanClass {
   static TYPES = [this.PARTIME, this.FULLTIME];
 
   constructor(type, courses = []) {
-    console.log(type, courses)
     this.type = type;
     this.courses = courses;
     this.maxCredits = this.type === "PARTIME" ? 40 : 80;

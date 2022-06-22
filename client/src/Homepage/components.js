@@ -2,7 +2,7 @@ import { Alert, Container, Row, Spinner } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
-import CustomNavbar from '../Navbar/Navbar';
+import CustomNavbar from '../Navbar/components';
 import { LoginForm } from '../Login/components';
 import { CourseList } from '../CourseList/components';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,9 +12,9 @@ import API from './API';
 import User from '../context';
 import StudyPlan from '../StudyPlan/components';
 import StudyPlanClass from '../StudyPlan/studyPlan';
-import { filterCourses, ACTION, ERRORS } from './util';
+import { filterCourses, ACTION, ERRORS } from '../util';
 
-function App() {
+function Homepage() {
 
   // ------------------------------------------------------ Hooks
 
@@ -23,6 +23,7 @@ function App() {
 
   const [dirtyCourses, setDirtyCourses] = useState(true);
   const [dirtyStudyPlan, setDirtyStudyPlan] = useState(true);
+  
   const [refreshCourses, setRefreshCourses] = useState([]);
 
   const [user, setUser] = useState({});
@@ -103,7 +104,6 @@ function App() {
           setDirtyCourses(true);
         })
         .catch(err => {
-          console.log(err);
           if (err.status === 404 || err.status === 401) {
             setStudyPlan(null);
             setDirtyStudyPlan(false);
@@ -253,4 +253,4 @@ function App() {
   );
 }
 
-export default App;
+export default Homepage;

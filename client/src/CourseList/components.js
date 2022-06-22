@@ -13,6 +13,7 @@ function CourseList(props) {
   return (
     <aside className={loggedIn ? "col-7" : "col-12"} id="left-sidebar">
       <Accordion defaultActiveKey={['0']} alwaysOpen>
+        <CourseListHeader />
         {
           props.courses.map((course, i) =>
             <CourseItem
@@ -25,6 +26,40 @@ function CourseList(props) {
         }
       </Accordion>
     </aside>
+  );
+}
+
+function CourseListHeader() {
+  const location = useLocation();
+
+  return (
+    <Accordion.Item>
+      <Accordion.Header id='courselist-header'>
+        <Container>
+          <Row>
+            {
+              location.pathname === "/edit" ?
+                <>
+                  <Col className='col-1'></Col>
+                  <Col><label>Course</label></Col>
+                  <Col><span>Code</span></Col>
+                  <Col><span>Credits</span></Col>
+                  <Col><span>Students number</span></Col>
+                  <Col className='col-1'></Col>
+                  <Col className='col-1'></Col>
+                </>
+                :
+                <>
+                  <Col><label>Course</label></Col>
+                  <Col><span>Code</span></Col>
+                  <Col><span>Credits</span></Col>
+                  <Col><span>Students number</span></Col>
+                </>
+            }
+          </Row>
+        </Container>
+      </Accordion.Header>
+    </Accordion.Item>
   );
 }
 
@@ -121,7 +156,7 @@ function CourseHeader(props) {
               <>
                 <Col><label className='text-danger'>{props.course.name}</label></Col>
                 <Col><span>{props.course.code}</span></Col>
-                <Col><span>{props.course.credits}</span></Col>
+                <Col><span>{props.course.credits} CFU</span></Col>
                 <Col><span>{props.course.currentStudents} / {props.course.maxStudents === null ? "unlimited" : props.course.maxStudents}</span></Col>
               </>
           }
@@ -133,7 +168,7 @@ function CourseHeader(props) {
 
 function CourseDescription(props) {
   return (
-    <Container className='px-0'>
+    <Container>
       <Row>
         <Col><label className='bold'>Propedeutic Course:</label></Col>
         <Col><span>{props.course.propedeuticCourse === null ? "None" : props.course.propedeuticCourse}</span></Col>

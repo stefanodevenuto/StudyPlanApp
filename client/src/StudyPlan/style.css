@@ -46,3 +46,19 @@
 .height-20 {
   height: 240px !important;
 }
+
+.remove-course {
+  cursor: pointer;
+}
+
+.remove-course > svg {
+  transition: all 0.3s ease;
+}
+
+.remove-course:hover > svg {
+  color: #dc3545;
+}
+
+.red-color {
+  color: #dc3545;
+}

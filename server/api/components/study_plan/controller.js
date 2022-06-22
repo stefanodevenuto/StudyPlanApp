@@ -61,7 +61,6 @@ class StudyPlanController {
   // ################################ Utils
 
   async buildStudyPlan(rows) {
-    console.log(this.courseController)
     let studyPlans = [];
     if (rows.length > 0) {
       // Setup last as the first restockOrder
