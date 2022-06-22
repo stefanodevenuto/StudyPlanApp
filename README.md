@@ -174,8 +174,7 @@
 
 ## Screenshot
 
-### Create Study Plan
-![Modifying Study Plan](./img/modifying_studyplan.png)
+![Modifying Study Plan](./img/modify_studyplan.png)
 
 ## Users Credentials
 
