@@ -1,4 +1,4 @@
-# Exam #1: "Piano degli studi"
+# Exam #1: Piano di studi
 ## Student: s304140 De Venuto Stefano 
 
 ## React Client Application Routes
