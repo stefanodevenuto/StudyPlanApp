@@ -190,6 +190,7 @@ function Homepage() {
         <CustomNavbar
           logout={logout}
           studyPlan={studyPlan}
+          setDirtyStudyPlan={setDirtyStudyPlan}
           sendRequestDeleteStudyPlan={sendRequestDeleteStudyPlan}
         />
         <Container fluid>

@@ -37,6 +37,11 @@ function CustomNavbar(props) {
     logout();
   }, [loadingLogout])
 
+  const navigateHome = () => {
+    props.setDirtyStudyPlan(true);
+    navigate("/");
+  }
+
   return (
     <Navbar bg="danger" expand="md" variant="dark" fixed="top" className="navbar-padding d-flex" >
 
@@ -83,7 +88,7 @@ function CustomNavbar(props) {
             <Nav.Item>
               <Nav.Link>
                 <Col>
-                  <Button variant='light' onClick={() => { navigate(`/`) }}>Home</Button>
+                  <Button variant='light' onClick={navigateHome}>Home</Button>
                 </Col>
               </Nav.Link>
             </Nav.Item>
