@@ -6,7 +6,7 @@ var express = require('express');
 var initRestRoutes = require('./api/routes')
 
 var app = new express();
-var port = process.env.PORT || 3002;
+var port = process.env.PORT || 3001;
 
 const corsOptions = {
   origin: 'http://localhost:3000',
