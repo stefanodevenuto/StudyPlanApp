@@ -1,5 +1,5 @@
-# Exam #1: Piano di studi
-## Student: s304140 De Venuto Stefano 
+# Study Plan App
+A dummy full-stack application to manage creation, modification and deletion of a study plan!  
 
 ## React Client Application Routes
 
